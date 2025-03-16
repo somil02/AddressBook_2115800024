@@ -6,6 +6,7 @@ using BusinessLayer.Interface;
 using BusinessLayer.Service;
 using RepositoryLayer.Hashing;
 using RepositoryLayer.Token;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,9 @@ builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddDbContext<AddressBookDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
+
+var redisConnectionString = builder.Configuration["Redis:ConnectionString"];
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
