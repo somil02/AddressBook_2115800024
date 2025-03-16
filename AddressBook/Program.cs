@@ -10,6 +10,7 @@ using StackExchange.Redis;
 using AddressBookApplication.RabitMQ.Interface;
 using AddressBookApplication.RabitMQ.Service;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,8 +25,9 @@ builder.Services.AddScoped<IUserBL, UserBL>();
 builder.Services.AddScoped<IUserRL, UserRL>();
 builder.Services.AddScoped<EmailService>();
 
-builder.Services.AddDbContext<AddressBookDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
+var connectionString = builder.Configuration.GetConnectionString("SqlConnection");
+
+builder.Services.AddDbContext<AddressBookDbContext>(options => options.UseSqlServer(connectionString));
 
 var redisConnectionString = builder.Configuration["Redis:ConnectionString"];
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
